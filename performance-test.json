@@ -1,0 +1,13 @@
+{
+  "name": "performance-test",
+  "version": "1.0.0",
+  "scripts": {
+    "test:perf": "npm run build && npm run preview",
+    "test:lighthouse": "lhci autorun",
+    "test:bundle": "npm run build && npx vite-bundle-analyzer dist/assets/*.js"
+  },
+  "devDependencies": {
+    "@lhci/cli": "^0.12.0",
+    "vite-bundle-analyzer": "^0.7.0"
+  }
+}

@@ -1,21 +1,42 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+// @ts-ignore
 import { apiService } from '../services/api';
 
-// Créer le contexte d'authentification
-const AuthContext = createContext();
+interface User {
+  email: string;
+  name: string;
+  token: string;
+  id?: string;
+  avatar?: string;
+}
 
-// Hook personnalisé pour utiliser le contexte d'authentification
-export const useAuth = () => {
+interface AuthContextType {
+  user: User | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  googleLogin: (credential: string) => Promise<{ success: boolean; error?: string }>;
+  register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  logout: () => Promise<void>;
+  checkAuthStatus: () => void;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+}
 
-// Provider d'authentification
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -32,7 +53,7 @@ export const AuthProvider = ({ children }) => {
     if (token && userEmail) {
       setUser({
         email: userEmail,
-        name: userName,
+        name: userName || userEmail,
         token: token
       });
       setIsAuthenticated(true);
@@ -45,7 +66,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Fonction de connexion
-  const login = async (email, password) => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setIsLoading(true);
       const response = await apiService.login(email, password);
@@ -60,7 +81,9 @@ export const AuthProvider = ({ children }) => {
         setUser({
           email: email,
           name: response.user?.name || email,
-          token: response.access_token
+          token: response.access_token,
+          id: response.user?.id,
+          avatar: response.user?.avatar
         });
         setIsAuthenticated(true);
         
@@ -69,7 +92,7 @@ export const AuthProvider = ({ children }) => {
       } else {
         throw new Error('Token d\'accès manquant');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erreur de connexion:', error);
       return { success: false, error: error.message };
     } finally {
@@ -78,7 +101,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Fonction de connexion Google
-  const googleLogin = async (credential) => {
+  const googleLogin = async (credential: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setIsLoading(true);
       const response = await apiService.googleAuth(credential);
@@ -86,18 +109,20 @@ export const AuthProvider = ({ children }) => {
       if (response.access_token) {
         // Décoder le token Google pour récupérer les infos utilisateur
         const { jwtDecode } = await import('jwt-decode');
-        const decoded = jwtDecode(credential);
+        const decoded: any = jwtDecode(credential);
         
         // Stocker les données d'authentification
         sessionStorage.setItem('jwt_token', response.access_token);
-        sessionStorage.setItem('user_email', decoded.email);
-        sessionStorage.setItem('user_name', decoded.name || decoded.email);
+        sessionStorage.setItem('user_email', decoded.email || response.user?.email);
+        sessionStorage.setItem('user_name', decoded.name || response.user?.name || decoded.email);
         
         // Mettre à jour l'état
         setUser({
-          email: decoded.email,
-          name: decoded.name || decoded.email,
-          token: response.access_token
+          email: decoded.email || response.user?.email,
+          name: decoded.name || response.user?.name || decoded.email,
+          token: response.access_token,
+          id: response.user?.id,
+          avatar: response.user?.avatar
         });
         setIsAuthenticated(true);
         
@@ -106,7 +131,7 @@ export const AuthProvider = ({ children }) => {
       } else {
         throw new Error('Token d\'accès manquant');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erreur de connexion Google:', error);
       return { success: false, error: error.message };
     } finally {
@@ -115,7 +140,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Fonction d'inscription
-  const register = async (name, email, password) => {
+  const register = async (name: string, email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setIsLoading(true);
       const response = await apiService.post('/auth/register', { 
@@ -134,7 +159,9 @@ export const AuthProvider = ({ children }) => {
         setUser({
           email: email,
           name: name,
-          token: response.access_token
+          token: response.access_token,
+          id: response.user?.id,
+          avatar: response.user?.avatar
         });
         setIsAuthenticated(true);
         
@@ -143,7 +170,7 @@ export const AuthProvider = ({ children }) => {
       } else {
         throw new Error('Token d\'accès manquant');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erreur d\'inscription:', error);
       return { success: false, error: error.message };
     } finally {
@@ -152,7 +179,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Fonction de déconnexion
-  const logout = async () => {
+  const logout = async (): Promise<void> => {
     try {
       setIsLoading(true);
       await apiService.logout();
@@ -169,7 +196,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Valeurs du contexte
-  const value = {
+  const value: AuthContextType = {
     user,
     isLoading,
     isAuthenticated,
@@ -185,6 +212,6 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 export default AuthContext;

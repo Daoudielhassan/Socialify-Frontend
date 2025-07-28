@@ -124,7 +124,7 @@ class ApiService {
 
   // === MÉTHODES POUR LES MESSAGES ===
 
-  // Récupérer les messages de l'utilisateur
+  // Récupérer les messages de l'utilisateur avec leurs prédictions
   async getMessages(params = {}) {
     const queryParams = new URLSearchParams(params).toString();
     const endpoint = queryParams ? `/messages?${queryParams}` : '/messages';
@@ -136,12 +136,26 @@ class ApiService {
     return this.post('/messages/fetch', { source });
   }
 
+  // Envoyer un message brut au moteur IA pour prédiction
+  async predictMessage(messageData) {
+    return this.post('/predict', messageData);
+  }
+
   // Soumettre une correction/feedback pour un message
-  async submitFeedback(messageId, feedback) {
+  async submitFeedback(messageId, correctedPriority, correctedContext) {
     return this.post('/feedback', { 
       message_id: messageId, 
-      feedback 
+      corrected_priority: correctedPriority,
+      corrected_context: correctedContext
     });
+  }
+
+  // === MÉTHODES D'ANALYSE ===
+
+  // Récupérer les données d'analyse
+  async getAnalytics(timeRange = '30d') {
+    const params = timeRange ? `?range=${timeRange}` : '';
+    return this.get(`/analytics${params}`);
   }
 
   // === MÉTHODES SUPPLÉMENTAIRES ===
@@ -149,11 +163,6 @@ class ApiService {
   // Récupérer les statistiques du dashboard
   async getDashboardStats() {
     return this.get('/dashboard/stats');
-  }
-
-  // Récupérer les données d'analyse de sentiment
-  async getSentimentAnalysis(timeRange = '30d') {
-    return this.get(`/analytics/sentiment?range=${timeRange}`);
   }
 
   // Récupérer les paramètres utilisateur
