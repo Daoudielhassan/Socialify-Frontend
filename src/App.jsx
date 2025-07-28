@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, DataProvider, useAuth } from './context';
-import Dashboard from './pages/Dashboard';
+import DashboardFixed from './pages/DashboardFixed';
 import Login from './pages/AuthPage';
 
 // Composant pour les routes protégées
@@ -27,7 +27,7 @@ function AppRoutes() {
       <Route 
         path="/dashboard" 
         element={
-          isAuthenticated ? <Dashboard /> : <Navigate to="/login" />
+          isAuthenticated ? <DashboardFixed /> : <Navigate to="/login" />
         } 
       />
       <Route path="/" element={<Navigate to="/dashboard" />} />
