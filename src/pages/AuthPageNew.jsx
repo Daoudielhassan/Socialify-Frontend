@@ -104,18 +104,18 @@ function AuthPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 py-12 bg-gray-50 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
         <div>
           <div className="flex justify-center">
-            <div className="flex items-center justify-center w-12 h-12 bg-blue-600 rounded-lg">
-              <span className="text-xl font-bold text-white">S</span>
+            <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-xl">S</span>
             </div>
           </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-center text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             {isRegisterMode ? 'Créer votre compte' : 'Connectez-vous à votre compte'}
           </h2>
-          <p className="mt-2 text-sm text-center text-gray-600">
+          <p className="mt-2 text-center text-sm text-gray-600">
             {isRegisterMode ? 'Ou' : 'Ou'}
             <button
               onClick={() => {
@@ -147,7 +147,7 @@ function AuthPage() {
               <div className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 text-gray-500 bg-gray-50">Ou continuez avec</span>
+              <span className="px-2 bg-gray-50 text-gray-500">Ou continuez avec</span>
             </div>
           </div>
 
@@ -163,7 +163,7 @@ function AuthPage() {
                   name="name"
                   type="text"
                   required={isRegisterMode}
-                  className="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                   placeholder="Nom complet"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -181,7 +181,7 @@ function AuthPage() {
                 type="email"
                 autoComplete="email"
                 required
-                className="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Adresse email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -198,7 +198,7 @@ function AuthPage() {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Mot de passe"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -206,7 +206,7 @@ function AuthPage() {
             </div>
 
             {error && (
-              <div className="p-3 text-sm text-center text-red-600 rounded-md bg-red-50">
+              <div className="text-red-600 text-sm text-center bg-red-50 p-3 rounded-md">
                 {error}
               </div>
             )}
@@ -215,11 +215,11 @@ function AuthPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md group hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <span className="flex items-center">
-                    <svg className="w-5 h-5 mr-3 -ml-1 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
